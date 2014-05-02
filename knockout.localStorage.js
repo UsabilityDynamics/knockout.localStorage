@@ -1,39 +1,51 @@
-define( 'knockout.localStorage', [ 'knockout' ], function( require, exports, module ) {
-  
-  var ko = require( 'knockout' );
+define( 'knockout.localStorage', function( require, exports, module ) {
 
-  // Wrap ko.observable and ko.observableArray
-  var methods = ['observable', 'observableArray'];
+    /**
+     *
+     * @param ko
+     * @returns {*}
+     */
+    function extendKnockout( ko ) {
 
-  ko.utils.arrayForEach(methods, function(method){
-    var saved = ko[method];
-    
-    ko[method] = function(initialValue, options){
-      options = options || {};
-
-      var key = options.persist;
-
-      // Load existing value if set
-      if(key && localStorage.hasOwnProperty(key)){
-        try{
-          initialValue = JSON.parse(localStorage.getItem(key))
-        }catch(e){};
+      if( 'object' !== typeof ko ) {
+        return console.error( 'knockout.localStorage', 'Knockout not available.' )
       }
 
-      // Create observable from saved method
-      var observable = saved(initialValue);
+      // Wrap ko.observable and ko.observableArray
+      var methods = ['observable', 'observableArray'];
 
-      // Subscribe to changes, and save to localStorage
-      if(key){
-        observable.subscribe(function(newValue){
-          localStorage.setItem(key, ko.toJSON(newValue));
-        });
-      };
+      ko.utils.arrayForEach(methods, function(method){
+        var saved = ko[method];
 
-      return observable;
+        ko[method] = function(initialValue, options){
+          options = options || {};
+
+          var key = options.persist;
+
+          // Load existing value if set
+          if(key && localStorage.hasOwnProperty(key)){
+            try{ initialValue = JSON.parse(localStorage.getItem(key)) } catch(e){}
+          }
+
+          // Create observable from saved method
+          var observable = saved(initialValue);
+
+          // Subscribe to changes, and save to localStorage
+          if(key){
+            observable.subscribe(function(newValue){
+              localStorage.setItem(key, ko.toJSON(newValue));
+            });
+          }
+
+          return observable;
+        }
+      })
+
     }
-  })
 
-  return ko;
+    // Extend Knockout.
+    require( [ 'knockout' ], extendKnockout );
 
-})
+    return extendKnockout;
+
+  });
