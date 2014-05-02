@@ -1,4 +1,7 @@
-(function(ko){
+define( 'knockout.localStorage', [ 'knockout' ] function( require, exports, module ) {
+  
+  var ko = require( 'knockout' );
+
   // Wrap ko.observable and ko.observableArray
   var methods = ['observable', 'observableArray'];
 
@@ -30,4 +33,7 @@
       return observable;
     }
   })
-})(ko);
+
+  return ko;
+
+})
