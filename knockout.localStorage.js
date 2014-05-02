@@ -1,4 +1,4 @@
-define( 'knockout.localStorage', [ 'knockout' ] function( require, exports, module ) {
+define( 'knockout.localStorage', [ 'knockout' ], function( require, exports, module ) {
   
   var ko = require( 'knockout' );
 
